@@ -1,3 +1,4 @@
+using eCommerceSolution.ProductsService.Middlewares;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,6 +26,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseExceptionHandlingMiddleware();
 
 app.UseAuthorization();
 
