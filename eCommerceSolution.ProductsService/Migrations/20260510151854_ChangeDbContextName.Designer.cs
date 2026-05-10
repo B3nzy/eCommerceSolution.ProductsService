@@ -12,8 +12,8 @@ using eCommerceSolution.ProductsService.Data;
 namespace eCommerceSolution.ProductsService.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260510150549_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20260510151854_ChangeDbContextName")]
+    partial class ChangeDbContextName
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

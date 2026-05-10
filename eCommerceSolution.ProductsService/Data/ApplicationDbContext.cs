@@ -4,9 +4,9 @@ using System;
 
 namespace eCommerceSolution.ProductsService.Data;
 
-public class ApplicatioonDbContext : DbContext
+public class ApplicationDbContext : DbContext
 {
-    public ApplicatioonDbContext(DbContextOptions<ApplicatioonDbContext> options)
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
     {
     }
