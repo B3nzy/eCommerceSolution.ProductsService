@@ -21,12 +21,17 @@ public class ProductsController : ControllerBase
         _logger = logger;
     }
 
-    [HttpGet("get-all-products")]
-    public IActionResult GetAllProducts()
-    {
-        return Ok(new { Message = "Products service is up and running!" });
-    }
+    #region API Endpoints
 
+    [HttpGet("get-all-products")]
+    public async Task<IActionResult> GetAllProducts()
+    {
+        var sw = Stopwatch.StartNew();
+        var getAllProductsResponse = await _mediator.Send(new Models.DTOs.GetAllProducts.GetAllProductsRequest());
+        sw.Stop();
+        _logger.LogInformation("[END] GetAllProducts request processed in {ElapsedMilliseconds} ms", sw.ElapsedMilliseconds);
+        return Ok(getAllProductsResponse);
+    }
 
 
     [HttpGet("search/product-id/{productId}")]
@@ -43,7 +48,8 @@ public class ProductsController : ControllerBase
         return Ok(getProductByIdResponse);
     }
 
-    [HttpPost]
+
+    [HttpPost("add-product")]
     public async Task<IActionResult> CreateProduct([FromBody] CreateProductRequest createProductRequest)
     {
         Stopwatch sw = Stopwatch.StartNew();
@@ -53,5 +59,7 @@ public class ProductsController : ControllerBase
 
         return Ok(createProductResponse);
     }
+
+    #endregion
 
 }
