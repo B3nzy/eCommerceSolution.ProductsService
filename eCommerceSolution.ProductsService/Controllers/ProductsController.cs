@@ -31,4 +31,11 @@ public class ProductsController : ControllerBase
         GetProductByIdResponse getProductByIdResponse =  await _mediator.Send(new GetProductByIdRequest() { ProductId = productId});
         return Ok(getProductByIdResponse);
     }
+
+    //[HttpPost]
+    //public async Task<IActionResult> CreateProduct([FromBody])
+    //{
+    //    return Ok(new { Message = "Create product endpoint is working!" });
+    //}
+
 }
