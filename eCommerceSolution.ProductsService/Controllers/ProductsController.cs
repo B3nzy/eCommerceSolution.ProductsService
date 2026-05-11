@@ -1,4 +1,5 @@
 ﻿using eCommerceSolution.ProductsService.Models.DTOs.CreateProduct;
+using eCommerceSolution.ProductsService.Models.DTOs.DeleteProduct;
 using eCommerceSolution.ProductsService.Models.DTOs.GetProductById;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -35,13 +36,13 @@ public class ProductsController : ControllerBase
 
 
     [HttpGet("search/product-id/{productId}")]
-    public async Task<IActionResult> GetProductById([FromRoute]Guid productId)
+    public async Task<IActionResult> GetProductById([FromRoute] Guid productId)
     {
         Stopwatch sw = Stopwatch.StartNew();
-        GetProductByIdResponse getProductByIdResponse =  await _mediator.Send(new GetProductByIdRequest() { ProductId = productId});
+        GetProductByIdResponse getProductByIdResponse = await _mediator.Send(new GetProductByIdRequest() { ProductId = productId });
         sw.Stop();
         _logger.LogInformation("[END] GetProductById request processed in {ElapsedMilliseconds} ms", sw.ElapsedMilliseconds);
-        if(getProductByIdResponse == null)
+        if (getProductByIdResponse == null)
         {
             return NotFound(new { Message = $"Product with ID {productId} not found." });
         }
@@ -58,6 +59,20 @@ public class ProductsController : ControllerBase
         _logger.LogInformation("[END] CreateProduct request processed in {ElapsedMilliseconds} ms", sw.ElapsedMilliseconds);
 
         return Ok(createProductResponse);
+    }
+
+    [HttpDelete("delete/product/{productId}")]
+    public async Task<IActionResult> DeleteProduct([FromRoute] Guid productId)
+    {
+        Stopwatch sw = Stopwatch.StartNew();
+        var deleteProductResponse = await _mediator.Send(new DeleteProductRequest() { ProductId = productId });
+        sw.Stop();
+        _logger.LogInformation("[END] DeleteProduct request processed in {ElapsedMilliseconds} ms", sw.ElapsedMilliseconds);
+        if (!deleteProductResponse)
+        {
+            return NotFound(new { Message = $"Product with ID {productId} not found." });
+        }
+        return Ok(new { Success = true, Message = $"Product with ID {productId} has been deleted." });
     }
 
     #endregion
