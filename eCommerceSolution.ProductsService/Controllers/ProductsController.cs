@@ -1,6 +1,8 @@
 ﻿using eCommerceSolution.ProductsService.Models.DTOs.CreateProduct;
 using eCommerceSolution.ProductsService.Models.DTOs.DeleteProduct;
 using eCommerceSolution.ProductsService.Models.DTOs.GetProductById;
+using eCommerceSolution.ProductsService.Models.DTOs.UpdateProduct;
+using eCommerceSolution.ProductsService.Models.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -73,6 +75,20 @@ public class ProductsController : ControllerBase
             return NotFound(new { Message = $"Product with ID {productId} not found." });
         }
         return Ok(new { Success = true, Message = $"Product with ID {productId} has been deleted." });
+    }
+
+    [HttpPost("update-product")]
+    public async Task<IActionResult> UpdateProduct([FromBody] UpdateProductRequest updateProductRequest)
+    {
+        Stopwatch sw = Stopwatch.StartNew();
+        var updateProductResponse = await _mediator.Send(updateProductRequest);
+        sw.Stop();
+        _logger.LogInformation("[END] UpdateProduct request processed in {ElapsedMilliseconds} ms", sw.ElapsedMilliseconds);
+        if (!updateProductResponse)
+        {
+            return NotFound(new { Message = $"Product with ID {updateProductRequest.ProductId} not found." });
+        }
+        return Ok(new { Success = true, Message = $"Product with ID {updateProductRequest.ProductId} has been updated."});
     }
 
     #endregion
