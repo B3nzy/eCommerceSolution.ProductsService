@@ -1,6 +1,7 @@
 ﻿using eCommerceSolution.ProductsService.Models.DTOs.CreateProduct;
 using eCommerceSolution.ProductsService.Models.DTOs.DeleteProduct;
 using eCommerceSolution.ProductsService.Models.DTOs.GetProductById;
+using eCommerceSolution.ProductsService.Models.DTOs.SearchProducts;
 using eCommerceSolution.ProductsService.Models.DTOs.UpdateProduct;
 using eCommerceSolution.ProductsService.Models.Entities;
 using MediatR;
@@ -88,7 +89,17 @@ public class ProductsController : ControllerBase
         {
             return NotFound(new { Message = $"Product with ID {updateProductRequest.ProductId} not found." });
         }
-        return Ok(new { Success = true, Message = $"Product with ID {updateProductRequest.ProductId} has been updated."});
+        return Ok(new { Success = true, Message = $"Product with ID {updateProductRequest.ProductId} has been updated." });
+    }
+
+    [HttpGet("search/{searchString}")]
+    public async Task<IActionResult> SearchProducts([FromRoute] string searchString)
+    {
+        Stopwatch sw = Stopwatch.StartNew();
+        var searchProductsResponse = await _mediator.Send(new SearchProductsRequest() { SearchString = searchString });
+        sw.Stop();
+        _logger.LogInformation("[END] SearchProducts request processed in {ElapsedMilliseconds} ms", sw.ElapsedMilliseconds);
+        return Ok(searchProductsResponse);
     }
 
     #endregion
