@@ -15,7 +15,7 @@ builder.Services.AddSwaggerGen();
 // Register DbContext with SQL Server provider
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(
-        builder.Configuration.GetConnectionString("MSSQLConnection")));
+        builder.Configuration.GetConnectionString("DockerMSSQLConnection")));
 
 // Register MediatR services
 builder.Services.AddMediatR(cfg =>
