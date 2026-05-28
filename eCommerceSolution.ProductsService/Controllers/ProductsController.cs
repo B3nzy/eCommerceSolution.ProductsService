@@ -1,4 +1,5 @@
-﻿using eCommerceSolution.ProductsService.Models.DTOs.CreateProduct;
+﻿using eCommerceSolution.ProductsService.Models.DTOs.CheckProductExists;
+using eCommerceSolution.ProductsService.Models.DTOs.CreateProduct;
 using eCommerceSolution.ProductsService.Models.DTOs.DeleteProduct;
 using eCommerceSolution.ProductsService.Models.DTOs.GetProductById;
 using eCommerceSolution.ProductsService.Models.DTOs.SearchProducts;
@@ -100,6 +101,19 @@ public class ProductsController : ControllerBase
         sw.Stop();
         _logger.LogInformation("[END] SearchProducts request processed in {ElapsedMilliseconds} ms", sw.ElapsedMilliseconds);
         return Ok(searchProductsResponse);
+    }
+
+    [HttpGet("search/check/{productId}")]
+    public async Task<IActionResult> CheckProductExists([FromRoute] Guid productId)
+    {
+        Stopwatch sw = Stopwatch.StartNew();
+        bool checkIfProductExists = await _mediator.Send(new CheckProductExistsRequest() { ProductId = productId });
+        sw.Stop();
+        _logger.LogInformation("[END] CheckProductExists request processed in {ElapsedMilliseconds} ms", sw.ElapsedMilliseconds);
+        if(!checkIfProductExists) {
+            return NotFound(false);
+        }
+        return Ok(true);
     }
 
     #endregion
