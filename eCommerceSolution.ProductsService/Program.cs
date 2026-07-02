@@ -1,5 +1,6 @@
 using eCommerceSolution.ProductsService.Data;
 using eCommerceSolution.ProductsService.Middlewares;
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
@@ -21,6 +22,25 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddMediatR(cfg =>
 {
     cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
+});
+
+// Register MassTransit with RabbitMQ
+builder.Services.AddMassTransit(cfg =>
+{
+    cfg.SetKebabCaseEndpointNameFormatter();
+
+    cfg.UsingRabbitMq((context, cfg) =>
+    {
+        var host = builder.Configuration["MessageBroker:Host"];
+        var username = builder.Configuration["MessageBroker:Username"];
+        var password = builder.Configuration["MessageBroker:Password"];
+
+        cfg.Host(host, "/", h =>
+        {
+            h.Username(username);
+            h.Password(password);
+        });
+    });
 });
 
 var app = builder.Build();
