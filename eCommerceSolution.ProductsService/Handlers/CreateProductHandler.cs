@@ -2,17 +2,20 @@
 using eCommerceSolution.ProductsService.Models.DTOs.CreateProduct;
 using eCommerceSolution.ProductsService.Models.Entities;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
+using eCommerce.Microservices.Events.Product;
+using MassTransit;
 
 namespace eCommerceSolution.ProductsService.Handlers;
 
 public class CreateProductHandler : IRequestHandler<CreateProductRequest, CreateProductResponse>
 {
     private readonly ApplicationDbContext _dbContext;
+    private readonly IPublishEndpoint _publishEndpoint;
 
-    public CreateProductHandler(ApplicationDbContext dbContext)
+    public CreateProductHandler(ApplicationDbContext dbContext, IPublishEndpoint publishEndpoint)
     {
-        _dbContext = dbContext;
+        _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+        _publishEndpoint = publishEndpoint ?? throw new ArgumentNullException(nameof(publishEndpoint));
     }
 
     public async Task<CreateProductResponse> Handle(CreateProductRequest request, CancellationToken cancellationToken)
@@ -22,12 +25,19 @@ public class CreateProductHandler : IRequestHandler<CreateProductRequest, Create
             ProductId = Guid.NewGuid(),
             ProductName = request.ProductName,
             Category = request.Category,
-            Price = request.Price,
+            Price = request.Price
+        };
+
+        ProductStock productStock = new ProductStock()
+        {
+            ProductId = product.ProductId,
             QuantityInStock = request.QuantityInStock
         };
 
         await _dbContext.Products.AddAsync(product);
         await _dbContext.SaveChangesAsync();
+
+        await _publishEndpoint.Publish(productStock, cancellationToken);
 
         return new CreateProductResponse()
         {
@@ -35,7 +45,7 @@ public class CreateProductHandler : IRequestHandler<CreateProductRequest, Create
             ProductName = product.ProductName,
             Category = product.Category,
             Price = product.Price,
-            QuantityInStock = product.QuantityInStock
+            QuantityInStock = productStock.QuantityInStock
         };
     }
 }

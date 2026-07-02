@@ -26,7 +26,7 @@ public class UpdateProductHandler : IRequestHandler<UpdateProductRequest, bool>
         product.ProductName = request.ProductName;
         product.Category = request.Category;
         product.Price = request.Price;
-        product.QuantityInStock = request.QuantityInStock;
+        //product.QuantityInStock = request.QuantityInStock;
         int rows = await _dbContext.SaveChangesAsync();
         return true;
 

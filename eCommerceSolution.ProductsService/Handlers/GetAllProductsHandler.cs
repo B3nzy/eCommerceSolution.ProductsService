@@ -26,7 +26,7 @@ public class GetAllProductsHandler : IRequestHandler<GetAllProductsRequest, GetA
                                                             Price = p.Price,
                                                             ProductId = p.ProductId,
                                                             ProductName = p.ProductName,
-                                                            QuantityInStock = p.QuantityInStock
+                                                            //QuantityInStock = p.QuantityInStock
                                                         })
                                                         .ToList();
 

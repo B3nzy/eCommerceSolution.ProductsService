@@ -25,7 +25,7 @@ public class GetProductByIdHandler : IRequestHandler<GetProductByIdRequest, GetP
             ProductName = product.ProductName,
             Category = product.Category,
             Price = product.Price,
-            QuantityInStock = product.QuantityInStock
+            //QuantityInStock = product.QuantityInStock
         };
     }
 }
