@@ -1,10 +1,14 @@
 using eCommerceSolution.ProductsService.Data;
+using eCommerceSolution.ProductsService.HttpClients;
 using eCommerceSolution.ProductsService.Middlewares;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
+
+
+builder.Configuration.AddJsonFile("microservices-baseurl.json", optional: false, reloadOnChange: true);
 
 // Add services to the container.
 
@@ -22,6 +26,13 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddMediatR(cfg =>
 {
     cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
+});
+
+// Register the InventoryMicroserviceHttpClient with the base address from configuration
+string? userServiceUrl = builder.Configuration["ServiceUrls:InventoryService"];
+builder.Services.AddHttpClient<InventoryMicroserviceHttpClient>(client =>
+{
+    client.BaseAddress = new Uri(userServiceUrl ?? throw new InvalidOperationException("Inventory Service URL is missing."));
 });
 
 // Register MassTransit with RabbitMQ

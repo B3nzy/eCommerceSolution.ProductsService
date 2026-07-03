@@ -1,4 +1,5 @@
 ﻿using eCommerceSolution.ProductsService.Data;
+using eCommerceSolution.ProductsService.HttpClients;
 using eCommerceSolution.ProductsService.Models.DTOs.GetAllProducts;
 using eCommerceSolution.ProductsService.Models.DTOs.GetProductById;
 using eCommerceSolution.ProductsService.Models.Entities;
@@ -10,10 +11,14 @@ namespace eCommerceSolution.ProductsService.Handlers;
 public class GetAllProductsHandler : IRequestHandler<GetAllProductsRequest, GetAllProductsResponse>
 {
     private readonly ApplicationDbContext _dbContext;
+    private readonly InventoryMicroserviceHttpClient _inventoryMicroserviceHttpClient;
+    private readonly ILogger<GetAllProductsHandler> _logger;
 
-    public GetAllProductsHandler(ApplicationDbContext dbContext)
+    public GetAllProductsHandler(ApplicationDbContext dbContext, InventoryMicroserviceHttpClient inventoryMicroserviceHttpClient, ILogger<GetAllProductsHandler> logger )
     {
-        _dbContext = dbContext;
+        _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+        _inventoryMicroserviceHttpClient = inventoryMicroserviceHttpClient ?? throw new ArgumentNullException(nameof(inventoryMicroserviceHttpClient));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
     public async Task<GetAllProductsResponse> Handle(GetAllProductsRequest request, CancellationToken cancellationToken)
@@ -25,10 +30,24 @@ public class GetAllProductsHandler : IRequestHandler<GetAllProductsRequest, GetA
                                                             Category = p.Category,
                                                             Price = p.Price,
                                                             ProductId = p.ProductId,
-                                                            ProductName = p.ProductName,
-                                                            //QuantityInStock = p.QuantityInStock
+                                                            ProductName = p.ProductName
                                                         })
                                                         .ToList();
+
+        foreach (var product in getProductByIdResponse)
+        {
+            try
+            {
+                var inventoryResponse = await _inventoryMicroserviceHttpClient.GetInventoryByProductId(product.ProductId.ToString());
+                product.QuantityInStock = inventoryResponse.QuantityInStock;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation($"Failed to get inventory for product {product.ProductId}. Setting QuantityInStock to 0. Exception: {ex.Message}");
+                product.QuantityInStock = 0;
+
+            }
+        }
 
         GetAllProductsResponse getAllProductsResponse = new GetAllProductsResponse() { ProductList = getProductByIdResponse };
         return getAllProductsResponse;
