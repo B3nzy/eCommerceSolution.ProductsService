@@ -1,6 +1,8 @@
-﻿using eCommerceSolution.ProductsService.Data;
+﻿using eCommerce.Microservices.Events.Product;
+using eCommerceSolution.ProductsService.Data;
 using eCommerceSolution.ProductsService.Models.DTOs.UpdateProduct;
 using eCommerceSolution.ProductsService.Models.Entities;
+using MassTransit;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,10 +11,14 @@ namespace eCommerceSolution.ProductsService.Handlers;
 public class UpdateProductHandler : IRequestHandler<UpdateProductRequest, bool>
 {
     private readonly ApplicationDbContext _dbContext;
+    private readonly ILogger<UpdateProductHandler> _logger;
+    private readonly IPublishEndpoint _publishEndpoint;
 
-    public UpdateProductHandler(ApplicationDbContext dbContext)
+    public UpdateProductHandler(ApplicationDbContext dbContext, ILogger<UpdateProductHandler> logger, IPublishEndpoint publishEndpoint)
     {
-        _dbContext = dbContext;
+        _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _publishEndpoint = publishEndpoint ?? throw new ArgumentNullException(nameof(publishEndpoint));
     }
 
     public async Task<bool> Handle(UpdateProductRequest request, CancellationToken cancellationToken)
@@ -26,9 +32,8 @@ public class UpdateProductHandler : IRequestHandler<UpdateProductRequest, bool>
         product.ProductName = request.ProductName;
         product.Category = request.Category;
         product.Price = request.Price;
-        //product.QuantityInStock = request.QuantityInStock;
         int rows = await _dbContext.SaveChangesAsync();
-        return true;
+
 
         // Alternative approach using Attach and setting the state to Modified
         //_dbContext.Products.Update(new Product
@@ -36,10 +41,18 @@ public class UpdateProductHandler : IRequestHandler<UpdateProductRequest, bool>
         //    ProductId = request.ProductId,
         //    ProductName = request.ProductName,
         //    Category = request.Category,
-        //    Price = request.Price,
-        //    QuantityInStock = request.QuantityInStock
+        //    Price = request.Price
         //});
         //await _dbContext.SaveChangesAsync(cancellationToken);
-        //return true;
+
+        ProductStock productStockEvent = new ProductStock()
+        {
+            ProductId = request.ProductId,
+            QuantityInStock = request.QuantityInStock,
+        };
+
+        await _publishEndpoint.Publish(productStockEvent, cancellationToken);
+
+        return true;
     }
 }
