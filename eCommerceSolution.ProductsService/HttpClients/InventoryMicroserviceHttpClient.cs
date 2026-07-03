@@ -16,7 +16,7 @@ public class InventoryMicroserviceHttpClient
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
-    public async Task<GetInventoryByProductIdResponse> GetInventoryByProductId(string productId)
+    public async Task<GetInventoryByProductIdResponse> GetInventoryByProductId(Guid productId)
     {
         HttpResponseMessage httpResponse = await _httpClient.GetAsync($"api/InventoryManagement/get-inventory-by-product-id/{productId}");
         if (httpResponse.IsSuccessStatusCode)
@@ -27,6 +27,6 @@ public class InventoryMicroserviceHttpClient
                 return response;
             }
         }
-        throw new Exception($"Inventory with id {productId} not found.");
+        return null;
     }
 }

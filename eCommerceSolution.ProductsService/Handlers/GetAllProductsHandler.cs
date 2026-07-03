@@ -14,7 +14,7 @@ public class GetAllProductsHandler : IRequestHandler<GetAllProductsRequest, GetA
     private readonly InventoryMicroserviceHttpClient _inventoryMicroserviceHttpClient;
     private readonly ILogger<GetAllProductsHandler> _logger;
 
-    public GetAllProductsHandler(ApplicationDbContext dbContext, InventoryMicroserviceHttpClient inventoryMicroserviceHttpClient, ILogger<GetAllProductsHandler> logger )
+    public GetAllProductsHandler(ApplicationDbContext dbContext, InventoryMicroserviceHttpClient inventoryMicroserviceHttpClient, ILogger<GetAllProductsHandler> logger)
     {
         _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         _inventoryMicroserviceHttpClient = inventoryMicroserviceHttpClient ?? throw new ArgumentNullException(nameof(inventoryMicroserviceHttpClient));
@@ -36,16 +36,15 @@ public class GetAllProductsHandler : IRequestHandler<GetAllProductsRequest, GetA
 
         foreach (var product in getProductByIdResponse)
         {
-            try
+            var inventoryResponse = await _inventoryMicroserviceHttpClient.GetInventoryByProductId(product.ProductId);
+            if (inventoryResponse == null)
             {
-                var inventoryResponse = await _inventoryMicroserviceHttpClient.GetInventoryByProductId(product.ProductId.ToString());
-                product.QuantityInStock = inventoryResponse.QuantityInStock;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogInformation($"Failed to get inventory for product {product.ProductId}. Setting QuantityInStock to 0. Exception: {ex.Message}");
+                _logger.LogInformation($"Failed to get inventory for product {product.ProductId}. Setting QuantityInStock to 0");
                 product.QuantityInStock = 0;
-
+            }
+            else
+            {
+                product.QuantityInStock = inventoryResponse.QuantityInStock;
             }
         }
 
