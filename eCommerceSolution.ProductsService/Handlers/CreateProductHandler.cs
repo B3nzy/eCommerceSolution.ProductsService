@@ -24,6 +24,7 @@ public class CreateProductHandler : IRequestHandler<CreateProductRequest, Create
         {
             ProductId = Guid.NewGuid(),
             ProductName = request.ProductName,
+            ProductDescription = request.ProductDescription,
             Category = request.Category,
             Price = request.Price
         };
@@ -43,6 +44,7 @@ public class CreateProductHandler : IRequestHandler<CreateProductRequest, Create
         {
             ProductId = product.ProductId,
             ProductName = product.ProductName,
+            ProductDescription = product.ProductDescription,
             Category = product.Category,
             Price = product.Price,
             QuantityInStock = productStock.QuantityInStock

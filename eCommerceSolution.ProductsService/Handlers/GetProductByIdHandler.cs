@@ -30,6 +30,7 @@ public class GetProductByIdHandler : IRequestHandler<GetProductByIdRequest, GetP
         {
             ProductId = product.ProductId,
             ProductName = product.ProductName,
+            ProductDescription = product.ProductDescription,
             Category = product.Category,
             Price = product.Price,
             QuantityInStock = response?.QuantityInStock ?? 0

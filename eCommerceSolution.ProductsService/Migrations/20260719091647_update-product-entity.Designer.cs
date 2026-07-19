@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using eCommerceSolution.ProductsService.Data;
 
@@ -11,9 +12,11 @@ using eCommerceSolution.ProductsService.Data;
 namespace eCommerceSolution.ProductsService.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicatioonDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260719091647_update-product-entity")]
+    partial class updateproductentity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

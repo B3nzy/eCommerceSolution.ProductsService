@@ -30,7 +30,8 @@ public class GetAllProductsHandler : IRequestHandler<GetAllProductsRequest, GetA
                                                             Category = p.Category,
                                                             Price = p.Price,
                                                             ProductId = p.ProductId,
-                                                            ProductName = p.ProductName
+                                                            ProductName = p.ProductName,
+                                                            ProductDescription = p.ProductDescription
                                                         })
                                                         .ToList();
 

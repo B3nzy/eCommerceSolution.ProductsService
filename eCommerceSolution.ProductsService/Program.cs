@@ -10,12 +10,22 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration.AddJsonFile("microservices-baseurl.json", optional: false, reloadOnChange: true);
 
+
+// Load LM Studio configuration from appsettings.json
+var endpoint = builder.Configuration["LMStudio:Endpoint"];
+var modelId = builder.Configuration["LMStudio:ModelId"];
+var embeddingModelId = builder.Configuration["LMStudio:EmbeddingModelId"];
+var apiKey = builder.Configuration["LMStudio:ApiKey"];
+
 // Add services to the container.
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+
+
 
 // Register DbContext with SQL Server provider
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
