@@ -6,6 +6,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>20c47cb0-87e0-4ceb-8500-465f12b1768a</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+	<!-- Add this line below to suppress SK experimental warnings -->
+	<NoWarn>$(NoWarn);SKEXP0001;SKEXP0010;SKEXP0011;SKEXP0070;EXTEXP0001</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,7 +21,9 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.SemanticKernel" Version="1.78.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
+    <PackageReference Include="Qdrant.Client" Version="1.18.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
 
