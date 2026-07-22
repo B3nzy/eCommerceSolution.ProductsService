@@ -93,11 +93,11 @@ public class ProductsController : ControllerBase
         return Ok(new { Success = true, Message = $"Product with ID {updateProductRequest.ProductId} has been updated." });
     }
 
-    [HttpGet("search/{searchString}")]
-    public async Task<IActionResult> SearchProducts([FromRoute] string searchString)
+    [HttpPost("search")]
+    public async Task<IActionResult> SearchProducts([FromBody] SearchProductsRequest request)
     {
         Stopwatch sw = Stopwatch.StartNew();
-        var searchProductsResponse = await _mediator.Send(new SearchProductsRequest() { SearchString = searchString });
+        var searchProductsResponse = await _mediator.Send(request);
         sw.Stop();
         _logger.LogInformation("[END] SearchProducts request processed in {ElapsedMilliseconds} ms", sw.ElapsedMilliseconds);
         return Ok(searchProductsResponse);
