@@ -1,15 +1,15 @@
 {
   // When running locally, use the local service URLs
-  "ServiceUrls": {
-    "UserService": "http://localhost:5000/",
-    "ProductsService": "http://localhost:5100/",
-    "InventoryService": "http://localhost:5300/"
-  }
+  //"ServiceUrls": {
+  //  "UserService": "http://localhost:5000/",
+  //  "ProductsService": "http://localhost:5100/",
+  //  "InventoryService": "http://localhost:5300/"
+  //}
 
   // When running in Docker, use the service URLs that point to the respective containers
-  //"ServiceUrls": {
-  //  "UserService": "http://ecommerce-users-microservice:8080/",
-  //  "ProductsService": "http://ecommerce-products-microservice:8080/",
-  //  "InventoryService": "http://ecommerce-inventory-microservice:8080/"
-  //}
+  "ServiceUrls": {
+    "UserService": "http://ecommerce-users-microservice:8080/",
+    "ProductsService": "http://ecommerce-products-microservice:8080/",
+    "InventoryService": "http://ecommerce-inventory-microservice:8080/"
+  }
 }
